@@ -1,0 +1,918 @@
+openapi: 3.0.0
+info:
+  title: autdoor
+  description: Especificações da API para o back-end da aplicação Autdoor um app de
+  version: 1.0.0
+paths:
+  /ads:
+    get:
+      summary: Get all list texts of ads.
+      tags:
+        - ads
+      # security:
+      #   - bearerAuth: []
+      responses:
+        '200':
+          description: List of texts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllAdsResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /cars:
+    get:
+      parameters:
+       - $ref: '#/components/parameters/PageSize'
+       - $ref: '#/components/parameters/IsAvailable'
+       - $ref: '#/components/parameters/ValueDateTo'
+       - $ref: '#/components/parameters/ValueDateFrom'
+      summary: Get list of All cars
+      tags:
+        - cars
+      description: cars availables
+      responses:
+        '200':
+          description: List of cars
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetCarsListResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Store a car in db
+      tags:
+        - cars
+      requestBody:
+        description: data needed to store a car
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCarRequest'
+      responses:
+        '201':
+          description: default status response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaulCreatedResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+  /cars/{carId}:
+    parameters:
+      - in: path
+        name: carId
+        schema: 
+          type: string
+        description: id of the car
+        required: true
+    get:
+      summary: get a car by id
+      tags:
+        - cars
+      responses:
+        '201':
+          description: default status response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaulCreatedResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      summary: update a car by id
+      tags:
+        - cars
+      requestBody:
+        description: data needed to store a car
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCarRequest'
+      responses:
+       '204':
+          description: No Content
+
+       '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      summary: delete a car by id
+      tags:
+        - cars
+      responses:
+        '204':
+          description: No content
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /cars/{carId}/upload-multiple:
+    post:
+      summary: Upload multiple images
+      tags:
+        - images
+      parameters:
+       - in: path
+         name: carId
+         schema: 
+           type: string
+         description: id of the car
+         required: true
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/InsertMultipleCarImages'
+      responses:
+        '200':
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaulCreatedResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users:
+    post:
+      summary: create user with all
+      requestBody:
+        description: data needed to store a car
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      tags:
+        - user
+      responses:
+        '200':
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaulCreatedResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/{userId}:
+    put:
+      parameters:
+        - in: path
+          required: true
+          name: userId
+          schema:
+            type: string
+      summary: update user
+      tags:
+        - user
+      requestBody:
+        description: data needed to store a car
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/{userId}/image/upload:
+    post:
+      summary: upload user's image
+      parameters:
+        - in: path
+          required: true
+          name: userId
+          schema:
+            type: string
+      tags:
+        - images
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+               $ref: '#/components/schemas/InsertUserImage'
+      responses:
+        '200':
+          description: default response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaulCreatedResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /auth/create-login:
+    post:
+      summary: create user auth login
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+         application/json:
+           schema:
+              $ref: '#/components/schemas/CreateAuthUserRequest'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaulCreatedResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /auth/login:
+    post:
+      summary: logs user in
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetUserToken'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTokenResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT 
+  schemas:
+    ObjectId:
+      type: string
+      pattern: "^[0-9a-fA-F]{24}$"
+      x-oapi-codegen-extra-tags:
+        bson: "_id"
+    GetAllAdsResponse:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/ObjectId'
+        title: 
+          type: string
+        texts:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdContent'
+    AdContent:
+      type: object
+      properties:
+        code:
+          type: integer
+          minimum: 1
+        text:
+          type: string
+        image:
+          type: string
+        url:
+          type: string
+        subcontent:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdSubContent'
+    AdSubContent:
+      type: object
+      properties:
+        code:
+          type: integer
+          minimum: 1
+        text:
+          type: string
+        image:
+          type: string
+        url:
+          type: string
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
+      additionalProperties: false
+      description: Bad request
+    GetCarsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+             $ref: '#/components/schemas/GetCarResponse'
+          x-oapi-codegen-extra-tags:
+            bson: "data"
+    GetUserToken:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+            bson: "email"
+        password: 
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "password"
+    UserTokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          format: JWT
+          x-oapi-codegen-extra-tags:
+            bson: "token"
+    GetCarResponse:
+      type: object
+      properties:
+        car_model:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "car_model"
+        reserved_date:
+          type: array
+          x-oapi-codegen-extra-tags:
+            bson: "reserved_date"
+          items:
+            type: string
+            format: date
+        brand:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "brand"
+        plate:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "plate"
+        color:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "color"
+        category:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "category"
+          enum: 
+            - Popular
+            - Moto
+            - Sports
+            - Classic
+            - Luxury
+            - SUV
+        year_fabrication:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "year_fabrication"
+        year_model:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "year_model"
+        owner_id:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "owner_id"
+        owner_email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+            bson: "owner_email"
+        km_quantity:
+          type: number
+          multipleOf: 0.01
+          x-oapi-codegen-extra-tags:
+            bson: "km_quantity"
+        city: 
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "city"
+        state: 
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "state"
+        isVailableForRent:
+          type: boolean
+          x-oapi-codegen-extra-tags:
+            bson: "isVailableForRent"
+        week_days_rent:
+          type: array
+          x-oapi-codegen-extra-tags:
+            bson: "week_days_rent"
+          items:
+            type: string
+            enum:
+              - MONDAY
+              - TUESDAY
+              - WEDNESDAY
+              - THURSDAY
+              - FRIDAY
+              - SATURDAY
+              - SUNDAY
+        imageUrl: 
+          type: array
+          x-oapi-codegen-extra-tags:
+            bson: "imageUrl"
+          items:
+            type: string
+        extra_features:
+          type: array
+          x-oapi-codegen-extra-tags:
+            bson: "extra_features"
+          items:
+            type: string
+    InsertMultipleCarImages:
+      type: object
+      properties:
+        carId:
+          $ref: '#/components/schemas/ObjectId'
+        owner_email:
+          type: string
+          format: email
+        images:
+          type: array
+          items:
+            type: object
+            properties:
+              binary:
+                type: string
+                format: binary
+              name: 
+                type: string
+    InsertUserImage:
+      type: object
+      properties:
+        userId:
+          $ref: '#/components/schemas/ObjectId'
+        owner_email:
+          type: string
+        image:
+          type: object
+          properties:
+            binary:
+              type: string
+              format: binary
+            name:
+              type: string
+    DefaulCreatedResponse:
+      type: object
+      properties:
+        _id:
+          $ref: '#/components/schemas/ObjectId'
+    CreateCarRequest:
+      properties:
+        car_model:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "car_model"
+        week_days_available:
+          type: array
+          x-oapi-codegen-extra-tags:
+            bson: "week_days_available"
+          items:
+            type: string
+            enum:
+              - MONDAY
+              - TUESDAY
+              - WEDNESDAY
+              - THURSDAY
+              - FRIDAY
+              - SATURDAY
+              - SUNDAY
+        brand:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "brand"
+        plate:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "plate"
+        color:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "color"
+        category:
+            type: string
+            x-oapi-codegen-extra-tags:
+              bson: "category"
+            enum: 
+              - Popular
+              - Moto
+              - Sports
+              - Classic
+              - Luxury
+              - SUV
+        year_fabrication:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "year_fabrication"
+        year_model:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "year_model"
+        owner_id:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "owner_id"
+        owner_email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+            bson: "owner_email"
+        km_quantity:
+          type: number
+          multipleOf: 0.01
+          x-oapi-codegen-extra-tags:
+            bson: "km_quantity"
+        city: 
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "city"
+        state: 
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "state"
+        imageUrl: 
+          x-oapi-codegen-extra-tags:
+            bson: "imageUrl"
+          type: array
+          items:
+            type: string
+        maximum_60_days:
+          type: boolean
+          default: false
+          x-oapi-codegen-extra-tags:
+            bson: "maximum_60_days"
+        created_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            bson: "created_at"
+        updated_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            bson: "updated_at"
+        extra_features:
+          type: array
+          x-oapi-codegen-extra-tags:
+            bson: "extra_features"
+          items:
+            type: string
+      additionalProperties: false
+    UpdateCarRequest:
+      properties:
+        week_days_available:
+          type: array
+          x-oapi-codegen-extra-tags:
+            bson: "week_days_available"
+          items:
+            type: string
+            enum:
+              - MONDAY
+              - TUESDAY
+              - WEDNESDAY
+              - THURSDAY
+              - FRIDAY
+              - SATURDAY
+              - SUNDAY
+        km_quantity:
+          type: number
+          multipleOf: 0.01
+          x-oapi-codegen-extra-tags:
+            bson: "km_quantity"
+        city: 
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "city"
+        maximum_60_days:
+          type: boolean
+          default: false
+          x-oapi-codegen-extra-tags:
+            bson: "maximum_60_days"
+        updated_at:
+          type: string
+          format: date-time
+          x-oapi-codegen-extra-tags:
+            bson: "updated_at"
+        extra_features:
+          type: array
+          x-oapi-codegen-extra-tags:
+            bson: "extra_features"
+          items:
+            type: string
+      additionalProperties: true
+    CreateUserRequest:
+      properties:
+        name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            validate: "required,min=1,max=256"
+            bson: "name"
+        phone:
+          type: array
+          items:
+            type: string
+            pattern: '\+\d{1,3} \(\d{2}\) \d{5}-\d{4}'
+            example: '+55 (99) 91234-5678'
+            x-oapi-codegen-extra-tags:
+              bson: "phone"
+        email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+              bson: "email"
+        id_document:
+          type: string
+          example: '1.234.56G'
+          x-oapi-codegen-extra-tags:
+            bson: "id_document"
+        CPF:
+          type: string
+          pattern: '^\d{3}\.\d{3}\.\d{3}-\d{2}$'
+          x-oapi-codegen-extra-tags:
+            bson: "cpf"
+        role:
+          type: array
+          items:
+            type: string
+            enum:
+              - ADMIN
+              - HOSTER
+              - RENTER
+            x-oapi-codegen-extra-tags:
+              bson: "role"
+        isActive:
+          type: boolean
+          x-oapi-codegen-extra-tags:
+            bson: "is_active"
+        drivers_permit:
+          type: object
+          x-oapi-codegen-extra-tags:
+            bson: "permit"
+          properties:
+            permit_number:
+              type: string
+              x-oapi-codegen-extra-tags:
+                bson: "license"
+            category:
+              type: array
+              x-oapi-codegen-extra-tags:
+                bson: "category"
+              items:
+                type: string
+                enum:
+                  - A
+                  - B
+                  - C
+                  - D
+            due_date:
+              type: string
+              format: date
+              x-oapi-codegen-extra-tags:
+                bson: "due_date"
+        imageUrl:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "imageUrl"
+        address:
+          type: object
+          x-oapi-codegen-extra-tags:
+            bson: "address"
+          properties:
+            street:
+              type: string
+              x-oapi-codegen-extra-tags:
+                bson: "street"
+            CEP:
+              type: string
+              pattern: '^\d{5}-\d{3}'
+              x-oapi-codegen-extra-tags:
+                bson: "CEP"
+            complement:
+             type: string
+             example: 'apt 10'
+             x-oapi-codegen-extra-tags:
+               bson: "complement"
+            number:
+              type: integer
+              example: 12
+              x-oapi-codegen-extra-tags:
+                bson: "number"
+            neighborhood:
+              type: string
+              x-oapi-codegen-extra-tags:
+                bson: "neighborhood"
+            city:
+              type: string
+              x-oapi-codegen-extra-tags:
+                bson: "city"
+            state:
+              type: string
+              x-oapi-codegen-extra-tags:
+                bson: "state"
+    UpdateUserRequest:
+      properties:
+        name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "name"
+        phone:
+          type: array
+          x-oapi-codegen-extra-tags:
+            bson: "phone"
+          items:
+            type: string
+            pattern: '\+\d{1,3} \(\d{2}\) \d{5}-\d{4}'
+            example: '+55 (99) 91234-5678'    
+        id_document:
+          type: string
+          example: '1.234.56G'
+          x-oapi-codegen-extra-tags:
+            bson: "id_document"
+        isActive:
+          type: boolean
+          x-oapi-codegen-extra-tags:
+            bson: "is_active"
+        drivers_permit:
+          type: object
+          x-oapi-codegen-extra-tags:
+            bson: "permit"
+          properties:
+            permit_number:
+              type: string
+              x-oapi-codegen-extra-tags:
+                bson: "license"
+            category:
+              type: array
+              x-oapi-codegen-extra-tags:
+                bson: "category"
+              items:
+                type: string
+                enum:
+                  - A
+                  - B
+                  - C
+                  - D
+            due_date:
+              type: string
+              format: date
+              x-oapi-codegen-extra-tags:
+                bson: "due_date"
+        address:
+          type: object
+          x-oapi-codegen-extra-tags:
+            bson: "address"
+          properties:
+            street:
+              type: string
+              x-oapi-codegen-extra-tags:
+                bson: "street"
+            CEP:
+              type: string
+              pattern: '^\d{5}-\d{3}'
+              x-oapi-codegen-extra-tags:
+                bson: "CEP"
+            complement:
+             type: string
+             example: 'apt 10'
+             x-oapi-codegen-extra-tags:
+               bson: "complement"
+            number:
+              type: integer
+              example: 12
+              x-oapi-codegen-extra-tags:
+                bson: "number"
+            neighborhood:
+              type: string
+              x-oapi-codegen-extra-tags:
+                bson: "neighborhood"
+            city:
+              type: string
+              x-oapi-codegen-extra-tags:
+                bson: "city"
+            state:
+              type: string
+              x-oapi-codegen-extra-tags:
+                bson: "state"
+    CreateAuthUserRequest:
+      properties:
+        email:
+          type: string
+          format: email
+          x-oapi-codegen-extra-tags:
+            bson: "email"
+        password:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "password"
+        name:
+          type: string
+          x-oapi-codegen-extra-tags:
+            bson: "name"
+        phone:
+          type: array
+          x-oapi-codegen-extra-tags:
+            bson: "phone"
+          items:
+            type: string
+            pattern: '\+\d{1,3} \(\d{2}\) \d{5}-\d{4}'
+            example: '+55 (99) 91234-5678'  
+  parameters:
+    PageSize:
+      schema:
+        type: integer
+        format: int32
+        example: 10
+        default: 10
+      in: query
+      name: pageSize
+      description: the page size indicates the number of the results in each page
+      required: false
+    IsAvailable:
+      schema:
+       type: boolean
+       example: true
+       default: false
+      in: query
+      name: isAvailable
+      required: false
+    ValueDateTo:
+      schema:
+        type: string
+        format: date
+        example: '2024-02-15'
+      name: valueDateTo
+      in: query
+      required: false
+    ValueDateFrom:
+      schema:
+        type: string
+        format: date
+        example: '2024-01-01'
+      name: valueDateFrom
+      in: query
+      required: false
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid

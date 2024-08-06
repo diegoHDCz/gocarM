@@ -1,0 +1,5 @@
+package: spec
+generate:
+  gin-server: true
+  models: true
+output: ./internal/api/spec/autdoor.spec.go
